@@ -1,0 +1,40 @@
+The file format consists of a sequence of blocks. Each block starts with
+1 type byte, and 3 bytes denoting the size of the data following. Blocks
+are, consequently, at most 16 MB bytes in size, and padded at the end to
+a 4-byte boundary.
+
+All integers are stored in big endian (network) byte order.
+
+
+Compressed data block format    (block type 1)
+----------------------------
+4 bytes         dsize   Size of decompressed data (in bytes)
+4 bytes         adler   Adler-32 checksum of data block
+
+Terminator  (block type 0)
+----------
+no data.
+
+
+Compressed data is compressed in three steps:
+    Burrows-Wheeler transom on data block of length L
+    MTF transform on data block of length L
+    Prepend 4 byte sentinel position, Z
+    Enthropy code using Huffman code
+
+The data format for the Huffman coded data is as follows:
+    129 bytes   htable  Hufmann code lengths
+    dsize - 129 hdata   Huffman coded data
+    (TODO: Describe sentinel, and 4-bit layout)
+
+The result of this data is dsize + 4 bytes;
+
+
+
+
+A. Borrow-Wheeler transform
+B. Move-to-front encoding
+    
+C. Huffman-encoding
+    129 bytes       htable  Huffman code lengths (4 bits per character)
+    size - 129      cdata   Compressed data block
